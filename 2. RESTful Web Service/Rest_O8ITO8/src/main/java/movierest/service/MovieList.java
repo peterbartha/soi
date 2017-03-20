@@ -90,7 +90,7 @@ public class MovieList {
 
 	private int generateMovieId() {
 		if (this.movies.size() == 0) {
-			return 1;
+			return 0;
 		}
 		
 		int id = 0;
