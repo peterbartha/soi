@@ -2,7 +2,7 @@ package movierest.service;
 
 import java.util.Comparator;
 
-public class MovieTitleComparator implements Comparator<Movie>{
+public class MovieTitleComparator implements Comparator<Movie> {
 	 
 	@Override
 	public int compare(Movie a, Movie b) {

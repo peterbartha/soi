@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
-@XmlRootElement
+@XmlRootElement(name = "result")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType
 public class MovieIdResult {
