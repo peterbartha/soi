@@ -1,0 +1,113 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Seat reservation</title>
+    <script language="javascript" type="text/javascript">
+        function getRootUri() {
+            return "ws://" + (document.location.hostname == "" ? "localhost" : document.location.hostname) + ":" +
+                    (document.location.port == "" ? "8080" : document.location.port);
+        }
+
+        var ws = null;
+        var wsUrl = null;
+        var rowCount = 10;
+        var colCount = 20;
+        var seatSize = 30;
+        var seatPadding = 2;
+        var canvas = null;
+        var context = null;
+        var mousePos = null;
+        var selectedSeat = null;
+
+        function init() {
+            // TODO: the word NEPTUN should be replaced with the own Neptune-code in capital letters,
+            // and the client should connect to this WebSocket address:
+            wsUrl = getRootUri() + "/WebSocket_NEPTUN/cinema";
+            // The following lines initialize the canvas:
+            canvas = document.getElementById('room');
+            canvas.addEventListener('mousemove', function (evt) { mousePos = getMousePos(canvas, evt); });
+            canvas.addEventListener('click', function (evt) { mousePos = getMousePos(canvas, evt); selectSeat(); });
+            context = canvas.getContext('2d');
+			draw();
+        }
+
+        // TODO: the WebSocket event handlers can come here
+
+        // Draws the canvas with free seats:
+        function draw() {
+            canvas.height = rowCount * seatSize;
+            canvas.width = colCount * seatSize;
+            for (i = 0; i < rowCount; i++) {
+                for (j = 0; j < colCount; j++) {
+                    drawSeat(i, j, "free");
+                }
+            }
+        }
+
+        // Draws a single seat to the canvas:
+        function drawSeat(row, col, status) {
+            context.beginPath();
+            switch (status) {
+                case "free": context.fillStyle = 'green'; break;
+                case "locked": context.fillStyle = 'yellow'; break;
+                case "reserved": context.fillStyle = 'red'; break;
+                default: context.fillStyle = 'gray'; break;
+            }
+            context.rect(col * seatSize, row * seatSize,
+                seatSize - seatPadding, seatSize - seatPadding);
+            context.fill();
+            context.closePath();
+        }
+
+        // Selects and locks a seat.
+        // Only one seat per client can be locked at a time.
+        function selectSeat() {
+            var col = Math.floor(mousePos.x / seatSize);
+            var row = Math.floor(mousePos.y / seatSize);
+            if (selectedSeat != null) {
+                // TODO: this is the old locked seat, its locked should be released
+            }
+            selectedSeat = { row: row, column: col };
+            // TODO: this is the new seat, it should be locked
+        }
+
+        // Returns the mouse position inside the canvas:
+        function getMousePos(canvas, evt) {
+            var rect = canvas.getBoundingClientRect();
+            return {
+                x: evt.clientX - rect.left,
+                y: evt.clientY - rect.top
+            };
+        }
+
+        window.addEventListener("load", init, false);
+
+    </script>
+</head>
+<!-- Warning: do not change the "id" and "name" attributes of the HTML elements after this line!
+	Do not remove or restructure the HTML tags either! Do not apply any CSS styles!
+    TODO: event handlers can be added to the buttons. -->
+<body>
+    <h1 style="text-align: center;">Seat reservation</h1>
+
+    <br />
+
+    <div style="text-align: center;">
+        <!-- This button should update the size of the room and the status of all the seats, 
+		     and the seats should be drawn to the canvas. -->
+
+        <input id="refreshButton" value="Refresh" type="button"><br />
+        <!-- The input gives the number of rows of the room for initialization: -->
+        <label for="rows">row count:</label><input id="rows" name="rows" value="10" type="text" size="5">
+        <!-- The input gives the number of columns of the room for initialization: -->
+        <label for="columns">column count:</label><input id="columns" name="columns" value="20" type="text" size="5">
+        <!-- The following button should initialize the room with the given rows and columns: -->
+        <input id="initButton" value="Init" type="button"><br />
+        <!-- The following button should reserve the currently locked seat: -->
+        <input id="reserveButton" value="Reserve" type="button"><br />
+        <!-- This is the canvas for drawing the seats: -->
+        <canvas id="room"></canvas>
+    </div>
+</body>
+</html>
